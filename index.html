@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноПлаза - База фильмов</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Шапка в виде кинопленки -->
+    <header class="header">
+        <div class="film-frames"></div>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-kino">Кино</span>
+                <span class="logo-plaza">Плаза</span>
+            </div>
+            <nav class="nav">
+    		<div class="nav-item active">Фильмы</div>
+    		<div class="nav-item">Режиссеры</div>
+    		<div class="nav-item">Жанры</div>
+    		<div class="nav-item">Новинки</div>
+    		<div class="nav-item" id="adminLink" style="display: none;">Админка</div>
+	    </nav>
+        </div>
+    </header>
+    
+    <!-- Слайдер -->
+    <section class="slider" id="slider">
+        <div class="slider-container" id="sliderContainer">
+            <!-- Слайды будут добавлены через JavaScript -->
+        </div>
+        <button class="slider-arrow prev" id="prevSlide">‹</button>
+        <button class="slider-arrow next" id="nextSlide">›</button>
+        <div class="slider-nav" id="sliderNav">
+            <!-- Навигационные точки будут добавлены через JavaScript -->
+        </div>
+    </section>
+    
+    <!-- Поиск и фильтры -->
+    <section class="filters">
+        <input type="text" class="search-box" placeholder="Поиск фильмов..." id="searchInput">
+        <select class="filter-select" id="genreFilter">
+            <option value="">Все жанры</option>
+        </select>
+        <select class="filter-select" id="yearFilter">
+            <option value="">Все годы</option>
+        </select>
+        <select class="filter-select" id="countryFilter">
+            <option value="">Все страны</option>
+        </select>
+    </section>
+    
+    <!-- Сетка фильмов -->
+    <main class="movies-grid" id="moviesContainer">
+        <div class="loading">Загрузка фильмов...</div>
+    </main>
+    
+    <!-- Подвал -->
+    <footer class="footer">
+        <p>© 2024 КиноПлаза. Все права защищены.</p>
+        <p>База данных фильмов с использованием Supabase</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
