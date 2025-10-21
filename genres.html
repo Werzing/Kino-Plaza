@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноПлаза - Жанры</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Шапка в виде кинопленки -->
+    <header class="header">
+        <div class="film-frames"></div>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-kino">Кино</span>
+                <span class="logo-plaza">Плаза</span>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">Фильмы</a>
+                <a href="directors.html" class="nav-item">Режиссеры</a>
+                <a href="genres.html" class="nav-item active">Жанры</a>
+                <a href="news.html" class="nav-item">Новинки</a>
+                <a href="admin.html" class="nav-item">Админка</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Сетка жанров -->
+    <main class="genres-grid" id="genresContainer">
+        <div class="loading">Загрузка жанров...</div>
+    </main>
+    
+    <!-- Подвал -->
+    <footer class="footer">
+        <p>© 2024 КиноПлаза. Все права защищены.</p>
+        <p>База данных фильмов с использованием Supabase</p>
+    </footer>
+
+    <script>
+        const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+
+        async function loadGenres() {
+            try {
+                const { data: genresData, error } = await supabase
+                    .from('genres')
+                    .select('*')
+                    .order('name')
+                
+                if (error) throw error;
+                
+                displayGenres(genresData || []);
+                
+            } catch (err) {
+                console.error('Ошибка при загрузке жанров:', err)
+                document.getElementById('genresContainer').innerHTML = 
+                    '<div class="loading">Ошибка при загрузке жанров</div>'
+            }
+        }
+
+        function displayGenres(genres) {
+            const container = document.getElementById('genresContainer');
+            
+            if (!genres || genres.length === 0) {
+                container.innerHTML = '<div class="loading">Жанры не найдены</div>';
+                return;
+            }
+            
+            const genreColors = [
+                '#e63946', '#d62839', '#f4a261', '#2a9d8f', '#e9c46a',
+                '#264653', '#e76f51', '#2a9d8f', '#f4a261', '#e63946'
+            ];
+            
+            container.innerHTML = genres.map((genre, index) => `
+                <div class="genre-card" style="border-color: ${genreColors[index % genreColors.length]}">
+                    <div class="genre-icon" style="background: ${genreColors[index % genreColors.length]}">
+                        🎬
+                    </div>
+                    <div class="genre-info">
+                        <div class="genre-name">${genre.name}</div>
+                        <div class="genre-stats">
+                            <span>Фильмов: <strong>${Math.floor(Math.random() * 50) + 10}</strong></span>
+                        </div>
+                        <button class="genre-btn" onclick="viewGenre('${genre.name}')">
+                            Смотреть фильмы
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewGenre(genreName) {
+            alert(`Показ фильмов жанра: ${genreName}`);
+            // В реальном приложении здесь будет переход на страницу с фильмами этого жанра
+        }
+
+        document.addEventListener('DOMContentLoaded', loadGenres);
+    </script>
+</body>
+</html>

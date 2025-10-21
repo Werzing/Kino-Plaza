@@ -595,3 +595,287 @@ body {
 .text-red {
     color: var(--accent-red);
 }
+
+/* Стили для страницы режиссеров */
+.directors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.director-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.director-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(230, 57, 70, 0.2);
+}
+
+.director-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.director-info {
+    flex: 1;
+}
+
+.director-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.director-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.director-stats {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.movies-count {
+    background: rgba(230, 57, 70, 0.1);
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+/* Стили для страницы жанров */
+.genres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.genre-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    border: 3px solid;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.genre-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(230, 57, 70, 0.2);
+}
+
+.genre-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+    color: white;
+}
+
+.genre-info {
+    color: var(--text-primary);
+}
+
+.genre-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.genre-stats {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.genre-btn {
+    padding: 0.7rem 1.5rem;
+    background: var(--accent-red);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.genre-btn:hover {
+    background: var(--soft-red);
+}
+
+/* Стили для страницы режиссеров */
+.directors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.director-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    border-left: 4px solid var(--accent-red);
+    transition: transform 0.3s;
+}
+
+.director-card:hover {
+    transform: translateY(-5px);
+}
+
+.director-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.director-info {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+/* Стили для новинок */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.news-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-top: 4px solid var(--accent-red);
+}
+
+.news-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--accent-red);
+}
+
+.news-date {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.news-content {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Стили для страницы новинок */
+.news-banner {
+    background: linear-gradient(135deg, var(--accent-red), var(--soft-red));
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.banner-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.new-badge {
+    position: relative;
+}
+
+.new-label {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent-red);
+    color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+/* Адаптивность для новых страниц */
+@media (max-width: 768px) {
+    .directors-grid,
+    .genres-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .news-banner {
+        padding: 2rem 1rem;
+    }
+    
+    .banner-content h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Обновление навигации */
+.nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-item {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--accent-red);
+    background: rgba(230, 57, 70, 0.1);
+}

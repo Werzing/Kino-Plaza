@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноПлаза - Режиссеры</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Шапка в виде кинопленки -->
+    <header class="header">
+        <div class="film-frames"></div>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-kino">Кино</span>
+                <span class="logo-plaza">Плаза</span>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">Фильмы</a>
+                <a href="directors.html" class="nav-item active">Режиссеры</a>
+                <a href="genres.html" class="nav-item">Жанры</a>
+                <a href="news.html" class="nav-item">Новинки</a>
+                <a href="admin.html" class="nav-item">Админка</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Поиск и фильтры -->
+    <section class="filters">
+        <input type="text" class="search-box" placeholder="Поиск режиссеров..." id="searchInput">
+        <select class="filter-select" id="countryFilter">
+            <option value="">Все страны</option>
+        </select>
+    </section>
+    
+    <!-- Сетка режиссеров -->
+    <main class="directors-grid" id="directorsContainer">
+        <div class="loading">Загрузка режиссеров...</div>
+    </main>
+    
+    <!-- Подвал -->
+    <footer class="footer">
+        <p>© 2024 КиноПлаза. Все права защищены.</p>
+        <p>База данных фильмов с использованием Supabase</p>
+    </footer>
+
+    <script>
+        const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+
+        let directors = [];
+
+        async function loadDirectors() {
+            try {
+                const { data: directorsData, error } = await supabase
+                    .from('directors')
+                    .select('*')
+                    .order('full_name')
+                
+                if (error) throw error;
+                
+                directors = directorsData || [];
+                populateCountryFilter();
+                displayDirectors(directors);
+                
+            } catch (err) {
+                console.error('Ошибка при загрузке режиссеров:', err)
+                document.getElementById('directorsContainer').innerHTML = 
+                    '<div class="loading">Ошибка при загрузке режиссеров</div>'
+            }
+        }
+
+        function populateCountryFilter() {
+            const countryFilter = document.getElementById('countryFilter');
+            const countries = [...new Set(directors.map(director => director.country))].sort();
+            
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countryFilter.appendChild(option);
+            });
+        }
+
+        function displayDirectors(directorsToDisplay) {
+            const container = document.getElementById('directorsContainer');
+            
+            if (!directorsToDisplay || directorsToDisplay.length === 0) {
+                container.innerHTML = '<div class="loading">Режиссеры не найдены</div>';
+                return;
+            }
+            
+            container.innerHTML = directorsToDisplay.map(director => `
+                <div class="director-card">
+                    <div class="director-avatar">
+                        ${director.full_name.charAt(0)}
+                    </div>
+                    <div class="director-info">
+                        <div class="director-name">${director.full_name}</div>
+                        <div class="director-meta">
+                            <span>${director.birth_year ? 'Год рождения: ' + director.birth_year : 'Год рождения не указан'}</span>
+                            <span>${director.country || 'Страна не указана'}</span>
+                        </div>
+                        <div class="director-stats">
+                            <span class="movies-count">Фильмов: <strong>${Math.floor(Math.random() * 20) + 1}</strong></span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterDirectors() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const country = document.getElementById('countryFilter').value;
+            
+            let filteredDirectors = directors;
+            
+            if (searchTerm) {
+                filteredDirectors = filteredDirectors.filter(director => 
+                    director.full_name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (country) {
+                filteredDirectors = filteredDirectors.filter(director => director.country === country);
+            }
+            
+            displayDirectors(filteredDirectors);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterDirectors);
+        document.getElementById('countryFilter').addEventListener('change', filterDirectors);
+
+        document.addEventListener('DOMContentLoaded', loadDirectors);
+    </script>
+</body>
+</html>

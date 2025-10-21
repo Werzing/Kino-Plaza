@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноПлаза - Новинки</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Шапка в виде кинопленки -->
+    <header class="header">
+        <div class="film-frames"></div>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-kino">Кино</span>
+                <span class="logo-plaza">Плаза</span>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">Фильмы</a>
+                <a href="directors.html" class="nav-item">Режиссеры</a>
+                <a href="genres.html" class="nav-item">Жанры</a>
+                <a href="news.html" class="nav-item active">Новинки</a>
+                <a href="admin.html" class="nav-item">Админка</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Баннер новинок -->
+    <section class="news-banner">
+        <div class="banner-content">
+            <h1>🎉 Новые поступления</h1>
+            <p>Самые свежие фильмы уже в нашем каталоге</p>
+        </div>
+    </section>
+    
+    <!-- Сетка новинок -->
+    <main class="movies-grid" id="newsContainer">
+        <div class="loading">Загрузка новинок...</div>
+    </main>
+    
+    <!-- Подвал -->
+    <footer class="footer">
+        <p>© 2024 КиноПлаза. Все права защищены.</p>
+        <p>База данных фильмов с использованием Supabase</p>
+    </footer>
+
+    <script>
+        const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+
+        async function loadNews() {
+            try {
+                const currentYear = new Date().getFullYear();
+                
+                const { data: moviesData, error } = await supabase
+                    .from('movies')
+                    .select(`
+                        *,
+                        genres(name),
+                        directors(full_name)
+                    `)
+                    .gte('release_year', currentYear - 1)
+                    .order('release_year', { ascending: false })
+                    .limit(12)
+                
+                if (error) throw error;
+                
+                displayNews(moviesData || []);
+                
+            } catch (err) {
+                console.error('Ошибка при загрузке новинок:', err)
+                document.getElementById('newsContainer').innerHTML = 
+                    '<div class="loading">Ошибка при загрузке новинок</div>'
+            }
+        }
+
+        function displayNews(movies) {
+            const container = document.getElementById('newsContainer');
+            
+            if (!movies || movies.length === 0) {
+                container.innerHTML = '<div class="loading">Новинки не найдены</div>';
+                return;
+            }
+            
+            container.innerHTML = movies.map(movie => `
+                <div class="movie-card new-badge">
+                    <div class="poster-container">
+                        <img src="${movie.poster || 'https://via.placeholder.com/300x400/222222/cccccc?text=No+Poster'}" 
+                             alt="${movie.title}" 
+                             class="movie-poster"
+                             onerror="this.src='https://via.placeholder.com/300x400/222222/cccccc?text=No+Poster'">
+                        <div class="new-label">NEW</div>
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-meta">
+                            <span>${movie.release_year}</span>
+                            <span>${movie.genres?.name || 'Не указан'}</span>
+                            <div class="movie-rating">
+                                <span>★</span> ${movie.rating || 'N/A'}
+                            </div>
+                        </div>
+                        <div class="movie-description">
+                            ${movie.plot || 'Описание отсутствует.'}
+                        </div>
+                        <div class="movie-details">
+                            <span>${movie.duration_minutes || '??'} мин.</span>
+                            <span>${movie.directors?.full_name || 'Режиссер не указан'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNews);
+    </script>
+</body>
+</html>
