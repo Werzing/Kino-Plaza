@@ -38,67 +38,67 @@
         <p>База данных фильмов с использованием Supabase</p>
     </footer>
 
-    <script>
-        const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
-        
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+   <script>
+    const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k';
 
-        async function loadGenres() {
-            try {
-                const { data: genresData, error } = await supabase
-                    .from('genres')
-                    .select('*')
-                    .order('name')
-                
-                if (error) throw error;
-                
-                displayGenres(genresData || []);
-                
-            } catch (err) {
-                console.error('Ошибка при загрузке жанров:', err)
-                document.getElementById('genresContainer').innerHTML = 
-                    '<div class="loading">Ошибка при загрузке жанров</div>'
-            }
+    if (!window.__supabaseClient) {
+        window.__supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    }
+    var supabase = window.__supabaseClient;
+
+    async function loadGenres() {
+        try {
+            const { data: genresData, error } = await supabase
+                .from('genres')
+                .select('*')
+                .order('name');
+            
+            if (error) throw error;
+            displayGenres(genresData || []);
+        } catch (err) {
+            console.error('Ошибка при загрузке жанров:', err);
+            document.getElementById('genresContainer').innerHTML = 
+                '<div class="loading">Ошибка при загрузке жанров</div>';
         }
+    }
 
-        function displayGenres(genres) {
-            const container = document.getElementById('genresContainer');
-            
-            if (!genres || genres.length === 0) {
-                container.innerHTML = '<div class="loading">Жанры не найдены</div>';
-                return;
-            }
-            
-            const genreColors = [
-                '#e63946', '#d62839', '#f4a261', '#2a9d8f', '#e9c46a',
-                '#264653', '#e76f51', '#2a9d8f', '#f4a261', '#e63946'
-            ];
-            
-            container.innerHTML = genres.map((genre, index) => `
-                <div class="genre-card" style="border-color: ${genreColors[index % genreColors.length]}">
-                    <div class="genre-icon" style="background: ${genreColors[index % genreColors.length]}">
-                        🎬
-                    </div>
-                    <div class="genre-info">
-                        <div class="genre-name">${genre.name}</div>
-                        <div class="genre-stats">
-                            <span>Фильмов: <strong>${Math.floor(Math.random() * 50) + 10}</strong></span>
-                        </div>
-                        <button class="genre-btn" onclick="viewGenre('${genre.name}')">
-                            Смотреть фильмы
-                        </button>
-                    </div>
+    function displayGenres(genres) {
+        const container = document.getElementById('genresContainer');
+        if (!genres || genres.length === 0) {
+            container.innerHTML = '<div class="loading">Жанры не найдены</div>';
+            return;
+        }
+        const genreColors = [
+            '#e63946', '#d62839', '#f4a261', '#2a9d8f', '#e9c46a',
+            '#264653', '#e76f51', '#2a9d8f', '#f4a261', '#e63946'
+        ];
+        container.innerHTML = genres.map((genre, index) => `
+            <div class="genre-card" style="border-color: ${genreColors[index % genreColors.length]}">
+                <div class="genre-icon" style="background: ${genreColors[index % genreColors.length]}">
+                    🎬
                 </div>
-            `).join('');
-        }
+                <div class="genre-info">
+                    <div class="genre-name">${genre.name}</div>
+                    <div class="genre-stats">
+                        <span>Фильмов: <strong>${Math.floor(Math.random() * 50) + 10}</strong></span>
+                    </div>
+                    <button class="genre-btn" onclick="viewGenre('${genre.name}')">
+                        Смотреть фильмы
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
 
-        function viewGenre(genreName) {
-            alert(`Показ фильмов жанра: ${genreName}`);
-            // В реальном приложении здесь будет переход на страницу с фильмами этого жанра
-        }
+    function viewGenre(genreName) {
+        alert(`Показ фильмов жанра: ${genreName}`);
+        // Переход на страницу с фильмами жанра
+    }
 
-        document.addEventListener('DOMContentLoaded', loadGenres);
-    </script>
+    document.addEventListener('DOMContentLoaded', loadGenres);
+</script>
+
+
 </body>
 </html>
