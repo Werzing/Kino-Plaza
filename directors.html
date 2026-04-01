@@ -47,95 +47,88 @@
     </footer>
 
     <script>
-        const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
-        
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+    const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k';
 
-        let directors = [];
+    if (!window.__supabaseClient) {
+        window.__supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    }
+    var supabase = window.__supabaseClient;
 
-        async function loadDirectors() {
-            try {
-                const { data: directorsData, error } = await supabase
-                    .from('directors')
-                    .select('*')
-                    .order('full_name')
-                
-                if (error) throw error;
-                
-                directors = directorsData || [];
-                populateCountryFilter();
-                displayDirectors(directors);
-                
-            } catch (err) {
-                console.error('Ошибка при загрузке режиссеров:', err)
-                document.getElementById('directorsContainer').innerHTML = 
-                    '<div class="loading">Ошибка при загрузке режиссеров</div>'
-            }
+    let directors = [];
+
+    async function loadDirectors() {
+        try {
+            const { data: directorsData, error } = await supabase
+                .from('directors')
+                .select('*')
+                .order('full_name');
+            
+            if (error) throw error;
+            directors = directorsData || [];
+            populateCountryFilter();
+            displayDirectors(directors);
+        } catch (err) {
+            console.error('Ошибка при загрузке режиссеров:', err);
+            document.getElementById('directorsContainer').innerHTML = 
+                '<div class="loading">Ошибка при загрузке режиссеров</div>';
         }
+    }
 
-        function populateCountryFilter() {
-            const countryFilter = document.getElementById('countryFilter');
-            const countries = [...new Set(directors.map(director => director.country))].sort();
-            
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                countryFilter.appendChild(option);
-            });
+    function populateCountryFilter() {
+        const countryFilter = document.getElementById('countryFilter');
+        const countries = [...new Set(directors.map(director => director.country))].sort();
+        countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            countryFilter.appendChild(option);
+        });
+    }
+
+    function displayDirectors(directorsToDisplay) {
+        const container = document.getElementById('directorsContainer');
+        if (!directorsToDisplay || directorsToDisplay.length === 0) {
+            container.innerHTML = '<div class="loading">Режиссеры не найдены</div>';
+            return;
         }
-
-        function displayDirectors(directorsToDisplay) {
-            const container = document.getElementById('directorsContainer');
-            
-            if (!directorsToDisplay || directorsToDisplay.length === 0) {
-                container.innerHTML = '<div class="loading">Режиссеры не найдены</div>';
-                return;
-            }
-            
-            container.innerHTML = directorsToDisplay.map(director => `
-                <div class="director-card">
-                    <div class="director-avatar">
-                        ${director.full_name.charAt(0)}
+        container.innerHTML = directorsToDisplay.map(director => `
+            <div class="director-card">
+                <div class="director-avatar">
+                    ${director.full_name.charAt(0)}
+                </div>
+                <div class="director-info">
+                    <div class="director-name">${director.full_name}</div>
+                    <div class="director-meta">
+                        <span>${director.birth_year ? 'Год рождения: ' + director.birth_year : 'Год рождения не указан'}</span>
+                        <span>${director.country || 'Страна не указана'}</span>
                     </div>
-                    <div class="director-info">
-                        <div class="director-name">${director.full_name}</div>
-                        <div class="director-meta">
-                            <span>${director.birth_year ? 'Год рождения: ' + director.birth_year : 'Год рождения не указан'}</span>
-                            <span>${director.country || 'Страна не указана'}</span>
-                        </div>
-                        <div class="director-stats">
-                            <span class="movies-count">Фильмов: <strong>${Math.floor(Math.random() * 20) + 1}</strong></span>
-                        </div>
+                    <div class="director-stats">
+                        <span class="movies-count">Фильмов: <strong>${Math.floor(Math.random() * 20) + 1}</strong></span>
                     </div>
                 </div>
-            `).join('');
+            </div>
+        `).join('');
+    }
+
+    function filterDirectors() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const country = document.getElementById('countryFilter').value;
+        let filteredDirectors = directors;
+        if (searchTerm) {
+            filteredDirectors = filteredDirectors.filter(director => 
+                director.full_name.toLowerCase().includes(searchTerm)
+            );
         }
-
-        function filterDirectors() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const country = document.getElementById('countryFilter').value;
-            
-            let filteredDirectors = directors;
-            
-            if (searchTerm) {
-                filteredDirectors = filteredDirectors.filter(director => 
-                    director.full_name.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            if (country) {
-                filteredDirectors = filteredDirectors.filter(director => director.country === country);
-            }
-            
-            displayDirectors(filteredDirectors);
+        if (country) {
+            filteredDirectors = filteredDirectors.filter(director => director.country === country);
         }
+        displayDirectors(filteredDirectors);
+    }
 
-        document.getElementById('searchInput').addEventListener('input', filterDirectors);
-        document.getElementById('countryFilter').addEventListener('change', filterDirectors);
-
-        document.addEventListener('DOMContentLoaded', loadDirectors);
-    </script>
+    document.getElementById('searchInput').addEventListener('input', filterDirectors);
+    document.getElementById('countryFilter').addEventListener('change', filterDirectors);
+    document.addEventListener('DOMContentLoaded', loadDirectors);
+</script>
 </body>
 </html>
