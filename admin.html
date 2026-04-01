@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ-панель - КиноПлаза</title>
-    <link rel="icon" type="image/x-icon" href="logo.png">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -193,8 +192,8 @@
         </div>
         <div style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
             Тестовые данные:<br>
-            Логин: <strong>У админа</strong><br>
-            Пароль: <strong>Так же только у админа :)</strong>
+            Логин: <strong>admin</strong><br>
+            Пароль: <strong>admin123</strong>
         </div>
     </div>
 
@@ -359,8 +358,12 @@
 
     <script>
         const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k';
+
+if (!window.__supabaseClient) {
+    window.__supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+}
+var supabase = window.__supabaseClient;
 
         let currentTab = 'movies';
 
@@ -810,6 +813,4 @@
         }
     </script>
 </body>
-
 </html>
-
