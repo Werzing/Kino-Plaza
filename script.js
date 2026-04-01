@@ -2,9 +2,12 @@
 const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+// Защита от повторного объявления
+if (!window.__supabaseClient) {
+    window.__supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey)
+}
+var supabase = window.__supabaseClient
 console.log('Supabase клиент создан')
-
 
 let movies = [];
 let genres = [];
@@ -271,17 +274,6 @@ document.getElementById('prevSlide').addEventListener('click', () => {
     startSlider(); // Перезапускаем таймер при ручном управлении
 });
 
-// Показываем ссылку на админку (можно убрать в продакшене)
-document.addEventListener('DOMContentLoaded', function() {
-    const adminLink = document.getElementById('adminLink');
-    if (adminLink) {
-        adminLink.style.display = 'block';
-        adminLink.addEventListener('click', function() {
-            window.location.href = 'admin.html';
-        });
-    }
-});
-
 document.getElementById('nextSlide').addEventListener('click', () => {
     nextSlide();
     startSlider(); // Перезапускаем таймер при ручном управлении
@@ -295,45 +287,6 @@ document.addEventListener('click', (e) => {
         startSlider(); // Перезапускаем таймер при ручном управлении
     }
 });
-// Показываем ссылку на админку и навигацию
-document.addEventListener('DOMContentLoaded', function() {
-    const adminLink = document.getElementById('adminLink');
-    if (adminLink) {
-        adminLink.style.display = 'block';
-    }
-    
-    // Обновляем навигацию на ссылки
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        if (!item.onclick) {
-            const text = item.textContent;
-            item.outerHTML = `<a href="${getPageUrl(text)}" class="nav-item ${isActivePage(text) ? 'active' : ''}">${text}</a>`;
-        }
-    });
-});
-
-function getPageUrl(pageName) {
-    const pages = {
-        'Фильмы': 'index.html',
-        'Режиссеры': 'directors.html',
-        'Жанры': 'genres.html',
-        'Новинки': 'news.html',
-        'Админка': 'admin.html'
-    };
-    return pages[pageName] || 'index.html';
-}
-
-function isActivePage(pageName) {
-    const currentPage = window.location.pathname.split('/').pop();
-    const pageUrls = {
-        'Фильмы': 'index.html',
-        'Режиссеры': 'directors.html',
-        'Жанры': 'genres.html',
-        'Новинки': 'news.html',
-        'Админка': 'admin.html'
-    };
-    return pageUrls[pageName] === currentPage;
-}
 
 // Загружаем данные при загрузке страницы
 document.addEventListener('DOMContentLoaded', loadAllData);
