@@ -47,76 +47,74 @@
     </footer>
 
     <script>
-        const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k'
-        
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+    const supabaseUrl = 'https://syqlznhvvqfadbbqeltk.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5cWx6bmh2dnFmYWRiYnFlbHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzU5MzAsImV4cCI6MjA3NTMxMTkzMH0.JjFICdfFnFwp0_jfSxKIOn1Je87ZtMRPSTFvjxYF3-k';
 
-        async function loadNews() {
-            try {
-                const currentYear = new Date().getFullYear();
-                
-                const { data: moviesData, error } = await supabase
-                    .from('movies')
-                    .select(`
-                        *,
-                        genres(name),
-                        directors(full_name)
-                    `)
-                    .gte('release_year', currentYear - 1)
-                    .order('release_year', { ascending: false })
-                    .limit(12)
-                
-                if (error) throw error;
-                
-                displayNews(moviesData || []);
-                
-            } catch (err) {
-                console.error('Ошибка при загрузке новинок:', err)
-                document.getElementById('newsContainer').innerHTML = 
-                    '<div class="loading">Ошибка при загрузке новинок</div>'
-            }
+    if (!window.__supabaseClient) {
+        window.__supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    }
+    var supabase = window.__supabaseClient;
+
+    async function loadNews() {
+        try {
+            const currentYear = new Date().getFullYear();
+            const { data: moviesData, error } = await supabase
+                .from('movies')
+                .select(`
+                    *,
+                    genres(name),
+                    directors(full_name)
+                `)
+                .gte('release_year', currentYear - 1)
+                .order('release_year', { ascending: false })
+                .limit(12);
+            
+            if (error) throw error;
+            displayNews(moviesData || []);
+        } catch (err) {
+            console.error('Ошибка при загрузке новинок:', err);
+            document.getElementById('newsContainer').innerHTML = 
+                '<div class="loading">Ошибка при загрузке новинок</div>';
         }
+    }
 
-        function displayNews(movies) {
-            const container = document.getElementById('newsContainer');
-            
-            if (!movies || movies.length === 0) {
-                container.innerHTML = '<div class="loading">Новинки не найдены</div>';
-                return;
-            }
-            
-            container.innerHTML = movies.map(movie => `
-                <div class="movie-card new-badge">
-                    <div class="poster-container">
-                        <img src="${movie.poster || 'https://via.placeholder.com/300x400/222222/cccccc?text=No+Poster'}" 
-                             alt="${movie.title}" 
-                             class="movie-poster"
-                             onerror="this.src='https://via.placeholder.com/300x400/222222/cccccc?text=No+Poster'">
-                        <div class="new-label">NEW</div>
+    function displayNews(movies) {
+        const container = document.getElementById('newsContainer');
+        if (!movies || movies.length === 0) {
+            container.innerHTML = '<div class="loading">Новинки не найдены</div>';
+            return;
+        }
+        container.innerHTML = movies.map(movie => `
+            <div class="movie-card new-badge">
+                <div class="poster-container">
+                    <img src="${movie.poster || 'https://via.placeholder.com/300x400/222222/cccccc?text=No+Poster'}" 
+                         alt="${movie.title}" 
+                         class="movie-poster"
+                         onerror="this.src='https://via.placeholder.com/300x400/222222/cccccc?text=No+Poster'">
+                    <div class="new-label">NEW</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">${movie.title}</div>
+                    <div class="movie-meta">
+                        <span>${movie.release_year}</span>
+                        <span>${movie.genres?.name || 'Не указан'}</span>
+                        <div class="movie-rating">
+                            <span>★</span> ${movie.rating || 'N/A'}
+                        </div>
                     </div>
-                    <div class="movie-info">
-                        <div class="movie-title">${movie.title}</div>
-                        <div class="movie-meta">
-                            <span>${movie.release_year}</span>
-                            <span>${movie.genres?.name || 'Не указан'}</span>
-                            <div class="movie-rating">
-                                <span>★</span> ${movie.rating || 'N/A'}
-                            </div>
-                        </div>
-                        <div class="movie-description">
-                            ${movie.plot || 'Описание отсутствует.'}
-                        </div>
-                        <div class="movie-details">
-                            <span>${movie.duration_minutes || '??'} мин.</span>
-                            <span>${movie.directors?.full_name || 'Режиссер не указан'}</span>
-                        </div>
+                    <div class="movie-description">
+                        ${movie.plot || 'Описание отсутствует.'}
+                    </div>
+                    <div class="movie-details">
+                        <span>${movie.duration_minutes || '??'} мин.</span>
+                        <span>${movie.directors?.full_name || 'Режиссер не указан'}</span>
                     </div>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        document.addEventListener('DOMContentLoaded', loadNews);
-    </script>
+    document.addEventListener('DOMContentLoaded', loadNews);
+</script>
 </body>
 </html>
